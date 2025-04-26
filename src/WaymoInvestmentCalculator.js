@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const WaymoInvestmentCalculator = () => {
   // Initial investment parameters
   const [baseVehicleCost, setBaseVehicleCost] = useState(73275);
   const [autonomousHardwareCost, setAutonomousHardwareCost] = useState(100000);
-  const [costOfCapital, setCostOfCapital] = useState(8);
+  const [costOfCapital, setCostOfCapital] = useState(8); // Used in calculations
   
   // Revenue parameters
   const [hoursPerDay, setHoursPerDay] = useState(12);
@@ -38,19 +38,8 @@ const WaymoInvestmentCalculator = () => {
   const [annualTrips, setAnnualTrips] = useState(0);
   const [annualMiles, setAnnualMiles] = useState(0);
   
-  // Calculate projections whenever inputs change
-  useEffect(() => {
-    calculateProjections();
-  }, [
-    baseVehicleCost, autonomousHardwareCost, hoursPerDay, daysPerWeek, 
-    tripLengthMiles, tripLengthMinutes, initialFarePerMile, depreciationRate, 
-    maintenanceCosts, insuranceCosts, cleaningCosts, chargingCosts, softwareLicensing, 
-    baseVehicleCostDecline, autonomousHardwareDecline, fareDeclineRate,
-    teslaCostAdvantage, teslaPricingImpact, yearsToProject
-  ]);
-  
   // Core business logic
-  const calculateProjections = () => {
+  const calculateProjections = useCallback(() => {
     // Calculate utilization
     const tripsPerDay = Math.floor(hoursPerDay * 60 / tripLengthMinutes);
     const annualTripsCalc = tripsPerDay * daysPerWeek * 52;
@@ -126,7 +115,18 @@ const WaymoInvestmentCalculator = () => {
     
     setProjectionData(standardData);
     setTeslaCompetitionData(teslaData);
-  };
+  }, [
+    baseVehicleCost, autonomousHardwareCost, costOfCapital, hoursPerDay, daysPerWeek, 
+    tripLengthMiles, tripLengthMinutes, initialFarePerMile, depreciationRate, 
+    maintenanceCosts, insuranceCosts, cleaningCosts, chargingCosts, softwareLicensing, 
+    baseVehicleCostDecline, autonomousHardwareDecline, fareDeclineRate,
+    teslaCostAdvantage, teslaPricingImpact, yearsToProject
+  ]);
+  
+  // Calculate projections whenever inputs change
+  useEffect(() => {
+    calculateProjections();
+  }, [calculateProjections]);
   
   // Formatting helpers
   const formatCurrency = (value) => {
@@ -141,9 +141,7 @@ const WaymoInvestmentCalculator = () => {
     return new Intl.NumberFormat('en-US').format(value);
   };
   
-  const formatPercent = (value) => {
-    return `${value}%`;
-  };
+  // Removed unused formatPercent function
   
   return (
     <div className="flex flex-col p-6 max-w-6xl mx-auto bg-white rounded-lg shadow-lg">
@@ -204,7 +202,21 @@ const WaymoInvestmentCalculator = () => {
               />
             </div>
             
-            <div className="col-span-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Cost of Capital (%)
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="30"
+                value={costOfCapital}
+                onChange={(e) => setCostOfCapital(Number(e.target.value))}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            
+            <div className="col-span-1">
               <p className="text-sm font-medium mb-1">Total Initial Investment: {formatCurrency(baseVehicleCost + autonomousHardwareCost)}</p>
             </div>
           </div>
