@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# Waymo Robotaxi Investment Calculator Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Overview
+We've developed an interactive financial calculator to analyze the potential returns on investing in a Waymo autonomous vehicle when they become available for personal ownership. This tool helps potential investors evaluate the business case by modeling revenue streams, expenses, and market evolution over time.
 
-## Available Scripts
+## Key Features
 
-In the project directory, you can run:
+### Core Financial Modeling
+- **Investment Parameters**: Base vehicle cost, autonomous hardware cost
+- **Revenue Calculation**: Based on operating hours, trip length, fare pricing
+- **Expense Tracking**: Depreciation, maintenance, insurance, cleaning, charging, software licensing
+- **Multi-Year Projections**: 5-year default view with ROI calculations for each year
 
-### `npm start`
+### Market Intelligence
+- **Hardware Cost Evolution**: Models how hardware costs decline over time
+- **Fare Pricing Trends**: Projects fare declines as market matures
+- **Competitive Analysis**: Models Tesla's potential impact on the market
+- **Visual Analytics**: Interactive charts for profit projections and ROI comparison
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### User Experience
+- **Intuitive Interface**: Organized by parameter categories with clear labeling
+- **Instant Recalculation**: All projections update automatically when parameters change
+- **Visual Guidance**: Highlighted information boxes explaining market intelligence parameters
+- **Comprehensive Results**: Detailed projection tables with color-coded profitability indicators
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Technical Implementation
+- **React Framework**: Implemented using React functional components with hooks
+- **State Management**: useState and useEffect for dynamic recalculation
+- **Data Visualization**: Recharts library for interactive line charts
+- **Responsive Design**: Mobile-friendly layout with Tailwind CSS
 
-### `npm test`
+## Key Insights Added
+- **Market Evolution Context**: Clear explanation that hardware cost declines represent market intelligence rather than direct benefits to the initial investment
+- **Tesla Competition Modeling**: Analysis of how lower-cost competitors will affect market dynamics
+- **Depreciation Guidance**: Recommendation of 33% annual depreciation for high-mileage commercial vehicles
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Next Steps
+This calculator provides a foundation for autonomous vehicle investment analysis that can be extended with:
+- GitHub hosting for collaborative improvement
+- Scenario saving and sharing functionality
+- Additional visualizations and sensitivity analysis tools
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The primary focus is helping users understand the unique economic characteristics of robotaxi investments, including high upfront costs, accelerated depreciation, and evolving market dynamics.
