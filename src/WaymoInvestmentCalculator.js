@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import './WaymoInvestmentCalculator.css';
 
 const WaymoInvestmentCalculator = () => {
   // Initial investment parameters
@@ -144,18 +145,18 @@ const WaymoInvestmentCalculator = () => {
   // Removed unused formatPercent function
   
   return (
-    <div className="flex flex-col p-6 max-w-6xl mx-auto bg-white rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold mb-4 text-center">Waymo Robotaxi Investment Calculator</h1>
+    <div className="calculator-container">
+      <h1 className="calculator-header">Waymo Robotaxi Investment Calculator</h1>
       
       {/* Dashboard Guide Banner */}
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
-        <h2 className="text-md font-semibold mb-2 flex items-center">
-          <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <div className="info-banner">
+        <h2 className="info-banner-title">
+          <svg className="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           How to Use This Calculator
         </h2>
-        <div className="text-sm text-gray-700">
+        <div className="guide-item-text">
           <p className="mb-2">
             <strong>Investment Timing:</strong> This calculator models a one-time investment made today. Hardware cost decline projections 
             show market intelligence for future investments, not direct benefits to your initial vehicle.
@@ -172,21 +173,21 @@ const WaymoInvestmentCalculator = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="parameters-grid">
         {/* Investment Parameters */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-3">Investment Parameters</h2>
+        <div className="parameter-section">
+          <h2 className="parameter-section-title">Investment Parameters</h2>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="parameter-grid">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="parameter-label">
                 Base Vehicle Cost
               </label>
               <input
                 type="number"
                 value={baseVehicleCost}
                 onChange={(e) => setBaseVehicleCost(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="parameter-input"
               />
             </div>
             
@@ -198,7 +199,7 @@ const WaymoInvestmentCalculator = () => {
                 type="number"
                 value={autonomousHardwareCost}
                 onChange={(e) => setAutonomousHardwareCost(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               />
             </div>
             
@@ -212,23 +213,23 @@ const WaymoInvestmentCalculator = () => {
                 max="30"
                 value={costOfCapital}
                 onChange={(e) => setCostOfCapital(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               />
             </div>
             
             <div className="col-span-1">
-              <p className="text-sm font-medium mb-1">Total Initial Investment: {formatCurrency(baseVehicleCost + autonomousHardwareCost)}</p>
+              <p className="text-sm font-medium mb-1">Total Initial Investment: <span className="text-indigo-700 font-bold">{formatCurrency(baseVehicleCost + autonomousHardwareCost)}</span></p>
             </div>
           </div>
         </div>
         
         {/* Revenue Parameters */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-3">Revenue Parameters</h2>
+        <div className="parameter-section">
+          <h2 className="parameter-section-title">Revenue Parameters</h2>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="parameter-grid">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="parameter-label">
                 Hours Per Day
               </label>
               <input
@@ -237,7 +238,7 @@ const WaymoInvestmentCalculator = () => {
                 max="24"
                 value={hoursPerDay}
                 onChange={(e) => setHoursPerDay(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="parameter-input"
               />
             </div>
             
@@ -310,16 +311,16 @@ const WaymoInvestmentCalculator = () => {
               />
             </div>
             
-            <div className="col-span-2">
-              <p className="text-sm font-medium mb-1">Annual Trips: {formatNumber(annualTrips)}</p>
-              <p className="text-sm font-medium mb-1">Annual Miles: {formatNumber(annualMiles)}</p>
+            <div className="col-span-2 mt-3 bg-gray-50 p-3 rounded-md">
+              <p className="text-sm font-medium mb-1">Annual Trips: <span className="text-indigo-700 font-bold">{formatNumber(annualTrips)}</span></p>
+              <p className="text-sm font-medium">Annual Miles: <span className="text-indigo-700 font-bold">{formatNumber(annualMiles)}</span></p>
             </div>
           </div>
         </div>
         
         {/* Expense Parameters */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-3">Expense Parameters</h2>
+        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">Expense Parameters</h2>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -332,7 +333,7 @@ const WaymoInvestmentCalculator = () => {
                 max="100"
                 value={depreciationRate}
                 onChange={(e) => setDepreciationRate(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               />
             </div>
             
@@ -404,8 +405,8 @@ const WaymoInvestmentCalculator = () => {
         </div>
         
         {/* Market & Competition Parameters */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-3">Market & Competition</h2>
+        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">Market & Competition</h2>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -418,7 +419,7 @@ const WaymoInvestmentCalculator = () => {
                 max="50"
                 value={baseVehicleCostDecline}
                 onChange={(e) => setBaseVehicleCostDecline(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               />
             </div>
             
@@ -482,38 +483,38 @@ const WaymoInvestmentCalculator = () => {
       </div>
       
       {/* Results */}
-      <div className="bg-gray-50 p-4 rounded-lg mb-8">
-        <h2 className="text-lg font-semibold mb-3">Investment Projection</h2>
+      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 mb-10">
+        <h2 className="text-xl font-semibold mb-4 text-indigo-700 border-b pb-2">Investment Projection</h2>
         
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
             <thead>
-              <tr>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Year</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Hardware Cost</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Vehicle Value</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Fare/Mile</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Revenue</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Capital Cost</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Total Expenses</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Profit</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">ROI</th>
+              <tr className="bg-gradient-to-r from-indigo-600 to-indigo-700">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Year</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Hardware Cost</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Vehicle Value</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Fare/Mile</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Revenue</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Capital Cost</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Total Expenses</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Profit</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">ROI</th>
               </tr>
             </thead>
             <tbody>
-              {projectionData.map((data) => (
-                <tr key={data.year}>
-                  <td className="py-2 px-4 border-b border-gray-200">{data.year}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{formatCurrency(data.hardwareCost)}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{formatCurrency(data.vehicleValue)}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">${data.farePerMile.toFixed(2)}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{formatCurrency(data.annualRevenue)}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{formatCurrency(data.capitalCost)}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{formatCurrency(data.annualExpenses)}</td>
-                  <td className={`py-2 px-4 border-b border-gray-200 ${data.annualProfit >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
+              {projectionData.map((data, index) => (
+                <tr key={data.year} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  <td className="py-3 px-4 border-b border-gray-200 font-medium">{data.year}</td>
+                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.hardwareCost)}</td>
+                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.vehicleValue)}</td>
+                  <td className="py-3 px-4 border-b border-gray-200">${data.farePerMile.toFixed(2)}</td>
+                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.annualRevenue)}</td>
+                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.capitalCost)}</td>
+                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.annualExpenses)}</td>
+                  <td className={`py-3 px-4 border-b border-gray-200 ${data.annualProfit >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
                     {formatCurrency(data.annualProfit)}
                   </td>
-                  <td className={`py-2 px-4 border-b border-gray-200 ${data.roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                  <td className={`py-3 px-4 border-b border-gray-200 ${data.roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
                     {data.roi.toFixed(1)}%
                   </td>
                 </tr>
@@ -524,9 +525,9 @@ const WaymoInvestmentCalculator = () => {
       </div>
       
       {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-3">Profit Projection</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">Profit Projection</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={projectionData}>
@@ -543,8 +544,8 @@ const WaymoInvestmentCalculator = () => {
           </div>
         </div>
         
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-3">ROI Comparison</h2>
+        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">ROI Comparison</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={projectionData}>
@@ -561,30 +562,30 @@ const WaymoInvestmentCalculator = () => {
         </div>
       </div>
 
-      <div className="bg-gray-50 p-4 rounded-lg mb-8">
-        <h2 className="text-lg font-semibold mb-3">Competition with Tesla</h2>
+      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 mb-10">
+        <h2 className="text-xl font-semibold mb-4 text-indigo-700 border-b pb-2">Competition with Tesla</h2>
         
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
             <thead>
-              <tr>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Year</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Waymo Fare</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Waymo ROI</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Tesla Fare</th>
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Tesla ROI</th>
+              <tr className="bg-gradient-to-r from-indigo-600 to-indigo-700">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Year</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Waymo Fare</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Waymo ROI</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Tesla Fare</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Tesla ROI</th>
               </tr>
             </thead>
             <tbody>
               {projectionData.map((data, index) => (
-                <tr key={data.year}>
-                  <td className="py-2 px-4 border-b border-gray-200">{data.year}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">${data.farePerMile.toFixed(2)}</td>
-                  <td className={`py-2 px-4 border-b border-gray-200 ${data.roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                <tr key={data.year} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  <td className="py-3 px-4 border-b border-gray-200 font-medium">{data.year}</td>
+                  <td className="py-3 px-4 border-b border-gray-200">${data.farePerMile.toFixed(2)}</td>
+                  <td className={`py-3 px-4 border-b border-gray-200 ${data.roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
                     {data.roi.toFixed(1)}%
                   </td>
-                  <td className="py-2 px-4 border-b border-gray-200">${teslaCompetitionData[index].farePerMile.toFixed(2)}</td>
-                  <td className={`py-2 px-4 border-b border-gray-200 ${teslaCompetitionData[index].roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                  <td className="py-3 px-4 border-b border-gray-200">${teslaCompetitionData[index].farePerMile.toFixed(2)}</td>
+                  <td className={`py-3 px-4 border-b border-gray-200 ${teslaCompetitionData[index].roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
                     {teslaCompetitionData[index].roi.toFixed(1)}%
                   </td>
                 </tr>
@@ -594,25 +595,25 @@ const WaymoInvestmentCalculator = () => {
         </div>
       </div>
       
-      <div className="bg-blue-50 p-4 rounded-lg mb-8">
-        <h2 className="text-lg font-semibold mb-3">Key Investment Takeaways</h2>
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg shadow-sm border border-blue-200 mb-10">
+        <h2 className="text-xl font-semibold mb-5 text-indigo-700 border-b border-indigo-100 pb-2">Key Investment Takeaways</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-3 rounded shadow-sm">
-            <h3 className="text-md font-semibold mb-2">Initial Investment</h3>
-            <p className="text-2xl font-bold text-blue-600">{formatCurrency(baseVehicleCost + autonomousHardwareCost)}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 transform transition-all hover:shadow-md hover:-translate-y-1">
+            <h3 className="text-md font-semibold mb-2 text-indigo-700">Initial Investment</h3>
+            <p className="text-2xl font-bold text-indigo-600">{formatCurrency(baseVehicleCost + autonomousHardwareCost)}</p>
             <p className="text-sm text-gray-600">Total initial cost</p>
           </div>
           
-          <div className="bg-white p-3 rounded shadow-sm">
-            <h3 className="text-md font-semibold mb-2">Year 1 Return</h3>
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 transform transition-all hover:shadow-md hover:-translate-y-1">
+            <h3 className="text-md font-semibold mb-2 text-indigo-700">Year 1 Return</h3>
             <p className={`text-2xl font-bold ${projectionData[0]?.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {projectionData[0]?.roi.toFixed(1)}%
             </p>
             <p className="text-sm text-gray-600">First year ROI</p>
           </div>
           
-          <div className="bg-white p-3 rounded shadow-sm">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 transform transition-all hover:shadow-md hover:-translate-y-1">
             <h3 className="text-md font-semibold mb-2">Payback Period</h3>
             {(() => {
               let investment = baseVehicleCost + autonomousHardwareCost;
@@ -629,7 +630,7 @@ const WaymoInvestmentCalculator = () => {
               
               return (
                 <>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className="text-2xl font-bold text-indigo-600">
                     {paybackYear ? `${paybackYear} years` : 'Beyond projection'}
                   </p>
                   <p className="text-sm text-gray-600">Time to recover investment</p>
@@ -639,8 +640,8 @@ const WaymoInvestmentCalculator = () => {
           </div>
         </div>
         
-        <div className="mt-4">
-          <h3 className="text-md font-semibold mb-2">Analysis</h3>
+        <div className="mt-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+          <h3 className="text-md font-semibold mb-3 text-indigo-700">Analysis</h3>
           <p className="text-sm text-gray-700 mb-2">
             This model projects the potential returns of investing in a Waymo robotaxi, factoring in hardware costs, 
             utilization rates, pricing changes, and competitive pressures.
@@ -654,12 +655,12 @@ const WaymoInvestmentCalculator = () => {
       </div>
       
       {/* How to Use This Dashboard Guide */}
-      <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
-        <h2 className="text-xl font-semibold mb-4">How to Use This Dashboard</h2>
+      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-6 rounded-lg shadow-sm border border-yellow-200">
+        <h2 className="text-xl font-semibold mb-5 text-amber-700 border-b border-amber-100 pb-2">How to Use This Dashboard</h2>
         
         <div className="space-y-4">
-          <div>
-            <h3 className="text-md font-medium text-gray-800">Understanding the Investment Timeline</h3>
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
+            <h3 className="text-md font-medium text-amber-700 mb-2">Understanding the Investment Timeline</h3>
             <p className="text-sm text-gray-700">
               This dashboard models a one-time investment made today. The hardware cost decline projections don't affect 
               your initial vehicle's profitability, but they provide crucial market intelligence about when future 
@@ -667,8 +668,8 @@ const WaymoInvestmentCalculator = () => {
             </p>
           </div>
           
-          <div>
-            <h3 className="text-md font-medium text-gray-800">Reading Market & Competition Parameters</h3>
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
+            <h3 className="text-md font-medium text-amber-700 mb-2">Reading Market & Competition Parameters</h3>
             <p className="text-sm text-gray-700">
               The hardware cost decline rates show how the market will evolve. Use these metrics to:
             </p>
@@ -680,8 +681,8 @@ const WaymoInvestmentCalculator = () => {
             </ul>
           </div>
           
-          <div>
-            <h3 className="text-md font-medium text-gray-800">Investment Strategy Insights</h3>
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
+            <h3 className="text-md font-medium text-amber-700 mb-2">Investment Strategy Insights</h3>
             <p className="text-sm text-gray-700">
               The Tesla competition section models how lower-cost competitors will affect market dynamics. This helps you:
             </p>
@@ -693,8 +694,8 @@ const WaymoInvestmentCalculator = () => {
             </ul>
           </div>
           
-          <div>
-            <h3 className="text-md font-medium text-gray-800">Using This Tool for Decision-Making</h3>
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
+            <h3 className="text-md font-medium text-amber-700 mb-2">Using This Tool for Decision-Making</h3>
             <p className="text-sm text-gray-700">
               Experiment with different parameters to stress-test your investment case:
             </p>
@@ -706,8 +707,8 @@ const WaymoInvestmentCalculator = () => {
             </ul>
           </div>
           
-          <div className="mt-4 bg-blue-100 p-3 rounded">
-            <h3 className="text-md font-medium text-gray-800">Future Development</h3>
+          <div className="mt-6 bg-gradient-to-r from-blue-100 to-indigo-100 p-4 rounded-lg shadow-sm">
+            <h3 className="text-md font-medium text-indigo-700 mb-2">Future Development</h3>
             <p className="text-sm text-gray-700">
               This calculator is an open-source project available on GitHub. Contributions are welcome to improve 
               the model assumptions, add features, or share interesting investment scenarios. 
