@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/waymo-investment-calculator/static/css/main.57c3d6cb.css",
+    "main.js": "/waymo-investment-calculator/static/js/main.2cf27fd9.js",
+    "static/js/453.321a9f06.chunk.js": "/waymo-investment-calculator/static/js/453.321a9f06.chunk.js",
+    "index.html": "/waymo-investment-calculator/index.html",
+    "main.57c3d6cb.css.map": "/waymo-investment-calculator/static/css/main.57c3d6cb.css.map",
+    "main.2cf27fd9.js.map": "/waymo-investment-calculator/static/js/main.2cf27fd9.js.map",
+    "453.321a9f06.chunk.js.map": "/waymo-investment-calculator/static/js/453.321a9f06.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.57c3d6cb.css",
+    "static/js/main.2cf27fd9.js"
+  ]
+}
