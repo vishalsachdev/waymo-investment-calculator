@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './WaymoInvestmentCalculator.css';
 
+import { useState, useEffect, useCallback, useRef } from 'react';
+import logo from './logo.svg';
+
 const WaymoInvestmentCalculator = () => {
   // Initial investment parameters
   const [baseVehicleCost, setBaseVehicleCost] = useState(73275);
@@ -38,7 +41,40 @@ const WaymoInvestmentCalculator = () => {
   const [teslaCompetitionData, setTeslaCompetitionData] = useState([]);
   const [annualTrips, setAnnualTrips] = useState(0);
   const [annualMiles, setAnnualMiles] = useState(0);
+  // Advanced metrics
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [npv, setNpv] = useState(0);
+  const [irr, setIrr] = useState(0);
+  // Snapshots
+  const [snapshots, setSnapshots] = useState([]);
+  // For dynamic highlighting
+  const prevValues = useRef({ investment: 0, roi: 0, payback: '' });
   
+  // Helper: NPV Calculation
+  const calculateNpv = (cashFlows, discountRate) => {
+    let npv = 0;
+    for (let i = 0; i < cashFlows.length; i++) {
+      npv += cashFlows[i] / Math.pow(1 + discountRate / 100, i + 1);
+    }
+    return npv;
+  };
+
+  // Helper: IRR Calculation (simple iterative approach)
+  const calculateIrr = (cashFlows, guess = 0.1) => {
+    let irr = guess;
+    let iterations = 100;
+    let tol = 0.0001;
+    for (let i = 0; i < iterations; i++) {
+      let npv = 0;
+      for (let j = 0; j < cashFlows.length; j++) {
+        npv += cashFlows[j] / Math.pow(1 + irr, j + 1);
+      }
+      if (Math.abs(npv) < tol) return irr * 100;
+      irr += npv > 0 ? 0.001 : -0.001;
+    }
+    return irr * 100;
+  };
+
   // Core business logic
   const calculateProjections = useCallback(() => {
     // Calculate utilization
@@ -127,6 +163,77 @@ const WaymoInvestmentCalculator = () => {
   // Calculate projections whenever inputs change
   useEffect(() => {
     calculateProjections();
+    // eslint-disable-next-line
+  }, [baseVehicleCost, autonomousHardwareCost, costOfCapital, hoursPerDay, daysPerWeek, tripLengthMiles, tripLengthMinutes, initialFarePerMile, fareDeclineRate, depreciationRate, maintenanceCosts, insuranceCosts, cleaningCosts, chargingCosts, softwareLicensing, baseVehicleCostDecline, autonomousHardwareDecline, teslaCostAdvantage, teslaPricingImpact, yearsToProject]);
+
+  // Calculate advanced metrics when projection data updates
+  useEffect(() => {
+    if (projectionData.length > 0) {
+      const investment = baseVehicleCost + autonomousHardwareCost;
+      const cashFlows = projectionData.map((d, i) => i === 0 ? d.annualProfit - investment : d.annualProfit);
+      setNpv(Math.round(calculateNpv(cashFlows, costOfCapital)));
+      setIrr(Number.isFinite(calculateIrr(cashFlows)) ? calculateIrr(cashFlows).toFixed(1) : null);
+    }
+  }, [projectionData, baseVehicleCost, autonomousHardwareCost, costOfCapital]);
+
+  // Dynamic highlighting for summary values
+  useEffect(() => {
+    const investment = baseVehicleCost + autonomousHardwareCost;
+    const roi = projectionData[0]?.roi;
+    let paybackYear = (() => {
+      let cumulativeProfit = 0;
+      let payback = 0;
+      for (let i = 0; i < projectionData.length; i++) {
+        cumulativeProfit += projectionData[i].annualProfit;
+        if (cumulativeProfit >= investment && payback === 0) {
+          payback = i + 1;
+          break;
+        }
+      }
+      return payback ? `${payback} years` : 'Beyond projection';
+    })();
+
+    const highlight = (id, changed) => {
+      const el = document.getElementById(id);
+      if (el && changed) {
+        el.classList.add('pulse-highlight');
+        setTimeout(() => el.classList.remove('pulse-highlight'), 1200);
+      }
+    };
+    highlight('initial-investment-value', prevValues.current.investment !== investment);
+    highlight('year1-roi-value', prevValues.current.roi !== roi);
+    highlight('payback-value', prevValues.current.payback !== paybackYear);
+    prevValues.current = { investment, roi, payback: paybackYear };
+  }, [baseVehicleCost, autonomousHardwareCost, projectionData]);
+
+  // Scenario snapshot handling
+  const handleSaveSnapshot = () => {
+    const investment = baseVehicleCost + autonomousHardwareCost;
+    let paybackYear = (() => {
+      let cumulativeProfit = 0;
+      let payback = 0;
+      for (let i = 0; i < projectionData.length; i++) {
+        cumulativeProfit += projectionData[i].annualProfit;
+        if (cumulativeProfit >= investment && payback === 0) {
+          payback = i + 1;
+          break;
+        }
+      }
+      return payback ? `${payback} years` : 'Beyond projection';
+    })();
+    setSnapshots([
+      ...snapshots,
+      {
+        timestamp: new Date().toLocaleString(),
+        initialInvestment: investment,
+        year1ROI: projectionData[0]?.roi?.toFixed(1) ?? '--',
+        payback: paybackYear,
+        npv: npv,
+        irr: irr ?? '--',
+      },
+    ]);
+  };
+
   }, [calculateProjections]);
   
   // Formatting helpers
@@ -175,7 +282,7 @@ const WaymoInvestmentCalculator = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="input-group">
               <label className="input-label">
-                Base Vehicle Cost
+                Base Vehicle Cost - Jaguar I-PACE 2025
               </label>
               <input
                 type="number"
@@ -465,47 +572,131 @@ const WaymoInvestmentCalculator = () => {
       </div>
       
       {/* Key Investment Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="summary-card">
-          <h3 className="summary-title">Initial Investment</h3>
-          <p className="summary-value">{formatCurrency(baseVehicleCost + autonomousHardwareCost)}</p>
-          <p className="summary-note">Total initial cost</p>
-        </div>
-        
-        <div className="summary-card">
-          <h3 className="summary-title">Year 1 Return</h3>
-          <p className={`summary-value ${projectionData[0]?.roi >= 0 ? 'positive-value' : 'negative-value'}`}>
-            {projectionData[0]?.roi.toFixed(1)}%
-          </p>
-          <p className="summary-note">First year ROI</p>
-        </div>
-        
-        <div className="summary-card">
-          <h3 className="summary-title">Payback Period</h3>
-          {(() => {
-            let investment = baseVehicleCost + autonomousHardwareCost;
-            let cumulativeProfit = 0;
-            let paybackYear = 0;
-            
-            for (let i = 0; i < projectionData.length; i++) {
-              cumulativeProfit += projectionData[i].annualProfit;
-              if (cumulativeProfit >= investment && paybackYear === 0) {
-                paybackYear = i + 1;
-                break;
+      {/* Sticky Summary Panel with Advanced Metrics Toggle */}
+      <div className="summary-panel-sticky">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Initial Investment Card */}
+          <div className="summary-card" tabIndex={0} aria-label="Initial Investment">
+            <div className="summary-header">
+              <img src="logo.svg" alt="Investment" className="summary-icon" />
+              <h3 className="summary-title">Initial Investment
+                <span className="info-icon" tabIndex={0} title="The total upfront cost, including the base vehicle and autonomous hardware.">ℹ️</span>
+              </h3>
+            </div>
+            <p className="summary-value highlight-on-change" id="initial-investment-value">
+              {formatCurrency(baseVehicleCost + autonomousHardwareCost)}
+            </p>
+            <p className="summary-note">Total initial cost <span className="benchmark">(Industry avg: $180k–$250k)</span></p>
+          </div>
+
+          {/* Year 1 Return Card */}
+          <div className="summary-card" tabIndex={0} aria-label="Year 1 Return">
+            <div className="summary-header">
+              <img src="logo.svg" alt="ROI" className="summary-icon" />
+              <h3 className="summary-title">Year 1 Return
+                <span className="info-icon" tabIndex={0} title="Return on investment for the first year, calculated as net profit divided by initial investment.">ℹ️</span>
+              </h3>
+            </div>
+            <p className={`summary-value highlight-on-change ${projectionData[0]?.roi >= 0 ? 'positive-value' : 'negative-value'}`} id="year1-roi-value">
+              {projectionData[0]?.roi?.toFixed(1) ?? '--'}%
+            </p>
+            <p className="summary-note">First year ROI <span className="benchmark">(Target: 20%+)</span></p>
+          </div>
+
+          {/* Payback Period Card */}
+          <div className="summary-card" tabIndex={0} aria-label="Payback Period">
+            <div className="summary-header">
+              <img src="logo.svg" alt="Payback" className="summary-icon" />
+              <h3 className="summary-title">Payback Period
+                <span className="info-icon" tabIndex={0} title="The number of years it takes for cumulative profit to cover the initial investment.">ℹ️</span>
+              </h3>
+            </div>
+            {(() => {
+              let investment = baseVehicleCost + autonomousHardwareCost;
+              let cumulativeProfit = 0;
+              let paybackYear = 0;
+              for (let i = 0; i < projectionData.length; i++) {
+                cumulativeProfit += projectionData[i].annualProfit;
+                if (cumulativeProfit >= investment && paybackYear === 0) {
+                  paybackYear = i + 1;
+                  break;
+                }
               }
-            }
-            
-            return (
-              <>
-                <p className="summary-value">
-                  {paybackYear ? `${paybackYear} years` : 'Beyond projection'}
-                </p>
-                <p className="summary-note">Time to recover investment</p>
-              </>
-            );
-          })()}
+              return (
+                <>
+                  <p className="summary-value highlight-on-change" id="payback-value">
+                    {paybackYear ? `${paybackYear} years` : 'Beyond projection'}
+                  </p>
+                  <p className="summary-note">Time to recover investment <span className="benchmark">(Typical: 2–4 yrs)</span></p>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+        {/* Advanced Metrics Toggle */}
+        <div className="flex items-center gap-4 mb-4">
+          <label htmlFor="advanced-metrics-toggle" className="font-medium text-sm">Show Advanced Metrics (NPV, IRR)</label>
+          <input type="checkbox" id="advanced-metrics-toggle" checked={showAdvanced} onChange={() => setShowAdvanced(!showAdvanced)} />
+        </div>
+        {showAdvanced && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="summary-card" tabIndex={0} aria-label="Net Present Value">
+              <div className="summary-header">
+                <img src="logo.svg" alt="NPV" className="summary-icon" />
+                <h3 className="summary-title">NPV
+                  <span className="info-icon" tabIndex={0} title="Net Present Value of all projected cash flows, discounted at your cost of capital.">ℹ️</span>
+                </h3>
+              </div>
+              <p className={`summary-value highlight-on-change ${npv >= 0 ? 'positive-value' : 'negative-value'}`}>{formatCurrency(npv)}</p>
+              <p className="summary-note">Net Present Value <span className="benchmark">(Positive = Attractive)</span></p>
+            </div>
+            <div className="summary-card" tabIndex={0} aria-label="Internal Rate of Return">
+              <div className="summary-header">
+                <img src="logo.svg" alt="IRR" className="summary-icon" />
+                <h3 className="summary-title">IRR
+                  <span className="info-icon" tabIndex={0} title="Internal Rate of Return: the discount rate that makes the NPV of all cash flows zero.">ℹ️</span>
+                </h3>
+              </div>
+              <p className={`summary-value highlight-on-change ${irr >= 0 ? 'positive-value' : 'negative-value'}`}>{irr ? irr.toFixed(1) + '%' : '--'}</p>
+              <p className="summary-note">Internal Rate of Return <span className="benchmark">(Target: 15%+)</span></p>
+            </div>
+          </div>
+        )}
+        {/* Scenario Snapshots */}
+        <div className="mb-4">
+          <button className="snapshot-btn" onClick={handleSaveSnapshot}>Save Scenario Snapshot</button>
+          {snapshots.length > 0 && (
+            <div className="snapshot-table-container">
+              <h4 className="font-semibold text-base mb-2">Scenario Snapshots</h4>
+              <table className="snapshot-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Initial Investment</th>
+                    <th>Year 1 ROI</th>
+                    <th>Payback</th>
+                    <th>NPV</th>
+                    <th>IRR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {snapshots.map((s, idx) => (
+                    <tr key={idx}>
+                      <td>{s.timestamp}</td>
+                      <td>{formatCurrency(s.initialInvestment)}</td>
+                      <td>{s.year1ROI}%</td>
+                      <td>{s.payback}</td>
+                      <td>{formatCurrency(s.npv)}</td>
+                      <td>{s.irr}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
+
       
       {/* Results Table */}
       <div className="panel mb-8">
