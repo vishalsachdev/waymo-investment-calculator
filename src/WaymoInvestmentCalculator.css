@@ -80,6 +80,8 @@
   transition: all 0.2s ease;
   appearance: textfield;
   -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  text-align: center;
 }
 
 .calculator-input:focus {

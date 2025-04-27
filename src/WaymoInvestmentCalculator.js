@@ -50,10 +50,15 @@ const WaymoInvestmentCalculator = () => {
   
   // Helper: NPV Calculation
   const calculateNpv = (cashFlows, discountRate) => {
-    let npv = 0;
-    for (let i = 0; i < cashFlows.length; i++) {
-      npv += cashFlows[i] / Math.pow(1 + discountRate / 100, i + 1);
+    // Convert percentage to decimal
+    const rate = discountRate / 100;
+    let npv = cashFlows[0]; // Initial investment (negative value)
+    
+    // Start from index 1 (year 1) since index 0 is the initial investment
+    for (let i = 1; i < cashFlows.length; i++) {
+      npv += cashFlows[i] / Math.pow(1 + rate, i);
     }
+    
     return npv;
   };
 
@@ -168,9 +173,9 @@ const WaymoInvestmentCalculator = () => {
   useEffect(() => {
     if (projectionData.length > 0) {
       const investment = baseVehicleCost + autonomousHardwareCost;
-      const cashFlows = projectionData.map((d, i) => i === 0 ? d.annualProfit - investment : d.annualProfit);
+      const cashFlows = [-investment, ...projectionData.map(d => d.annualProfit)];
       setNpv(Math.round(calculateNpv(cashFlows, costOfCapital)));
-      setIrr(Number.isFinite(calculateIrr(cashFlows)) ? calculateIrr(cashFlows).toFixed(1) : null);
+      setIrr(Number.isFinite(calculateIrr(cashFlows)) ? calculateIrr(cashFlows) : null);
     }
   }, [projectionData, baseVehicleCost, autonomousHardwareCost, costOfCapital]);
 
@@ -486,6 +491,20 @@ const WaymoInvestmentCalculator = () => {
                 className="calculator-input"
               />
             </div>
+            
+            <div className="input-group">
+              <label className="input-label">
+                Cost of Capital (%)
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="30"
+                value={costOfCapital}
+                onChange={(e) => setCostOfCapital(Number(e.target.value))}
+                className="calculator-input"
+              />
+            </div>
           </div>
         </div>
         
@@ -574,7 +593,7 @@ const WaymoInvestmentCalculator = () => {
           {/* Initial Investment Card */}
           <div className="summary-card" tabIndex={0} aria-label="Initial Investment">
             <div className="summary-header">
-              <img src="logo.svg" alt="Investment" className="summary-icon" />
+              <img src={logo} alt="Investment" className="summary-icon" />
               <h3 className="summary-title">Initial Investment
                 <span className="info-icon" tabIndex={0} title="The total upfront cost, including the base vehicle and autonomous hardware.">ℹ️</span>
               </h3>
@@ -588,7 +607,7 @@ const WaymoInvestmentCalculator = () => {
           {/* Year 1 Return Card */}
           <div className="summary-card" tabIndex={0} aria-label="Year 1 Return">
             <div className="summary-header">
-              <img src="logo.svg" alt="ROI" className="summary-icon" />
+              <img src={logo} alt="ROI" className="summary-icon" />
               <h3 className="summary-title">Year 1 Return
                 <span className="info-icon" tabIndex={0} title="Return on investment for the first year, calculated as net profit divided by initial investment.">ℹ️</span>
               </h3>
@@ -602,7 +621,7 @@ const WaymoInvestmentCalculator = () => {
           {/* Payback Period Card */}
           <div className="summary-card" tabIndex={0} aria-label="Payback Period">
             <div className="summary-header">
-              <img src="logo.svg" alt="Payback" className="summary-icon" />
+              <img src={logo} alt="Payback" className="summary-icon" />
               <h3 className="summary-title">Payback Period
                 <span className="info-icon" tabIndex={0} title="The number of years it takes for cumulative profit to cover the initial investment.">ℹ️</span>
               </h3>
@@ -638,7 +657,7 @@ const WaymoInvestmentCalculator = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="summary-card" tabIndex={0} aria-label="Net Present Value">
               <div className="summary-header">
-                <img src="logo.svg" alt="NPV" className="summary-icon" />
+                <img src={logo} alt="NPV" className="summary-icon" />
                 <h3 className="summary-title">NPV
                   <span className="info-icon" tabIndex={0} title="Net Present Value of all projected cash flows, discounted at your cost of capital.">ℹ️</span>
                 </h3>
@@ -648,12 +667,12 @@ const WaymoInvestmentCalculator = () => {
             </div>
             <div className="summary-card" tabIndex={0} aria-label="Internal Rate of Return">
               <div className="summary-header">
-                <img src="logo.svg" alt="IRR" className="summary-icon" />
+                <img src={logo} alt="IRR" className="summary-icon" />
                 <h3 className="summary-title">IRR
                   <span className="info-icon" tabIndex={0} title="Internal Rate of Return: the discount rate that makes the NPV of all cash flows zero.">ℹ️</span>
                 </h3>
               </div>
-              <p className={`summary-value highlight-on-change ${irr >= 0 ? 'positive-value' : 'negative-value'}`}>{irr ? irr.toFixed(1) + '%' : '--'}</p>
+              <p className={`summary-value highlight-on-change ${irr >= 0 ? 'positive-value' : 'negative-value'}`}>{irr !== null ? irr.toFixed(1) + '%' : '--'}</p>
               <p className="summary-note">Internal Rate of Return <span className="benchmark">(Target: 15%+)</span></p>
             </div>
           </div>
