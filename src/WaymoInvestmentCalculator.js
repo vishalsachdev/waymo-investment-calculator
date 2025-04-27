@@ -1,8 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './WaymoInvestmentCalculator.css';
-
-import { useState, useEffect, useCallback, useRef } from 'react';
 import logo from './logo.svg';
 
 const WaymoInvestmentCalculator = () => {
@@ -234,8 +232,6 @@ const WaymoInvestmentCalculator = () => {
     ]);
   };
 
-  }, [calculateProjections]);
-  
   // Formatting helpers
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', {
