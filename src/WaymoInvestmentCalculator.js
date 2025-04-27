@@ -14,6 +14,7 @@ const WaymoInvestmentCalculator = () => {
   const [tripLengthMiles, setTripLengthMiles] = useState(4);
   const [tripLengthMinutes, setTripLengthMinutes] = useState(15);
   const [initialFarePerMile, setInitialFarePerMile] = useState(11.84);
+  const [fareDeclineRate, setFareDeclineRate] = useState(15);
   
   // Expense parameters
   const [depreciationRate, setDepreciationRate] = useState(33);
@@ -26,7 +27,6 @@ const WaymoInvestmentCalculator = () => {
   // Market parameters
   const [baseVehicleCostDecline, setBaseVehicleCostDecline] = useState(10);
   const [autonomousHardwareDecline, setAutonomousHardwareDecline] = useState(20);
-  const [fareDeclineRate, setFareDeclineRate] = useState(15);
   
   // Competition parameters
   const [teslaCostAdvantage, setTeslaCostAdvantage] = useState(30);
@@ -142,94 +142,74 @@ const WaymoInvestmentCalculator = () => {
     return new Intl.NumberFormat('en-US').format(value);
   };
   
-  // Removed unused formatPercent function
-  
   return (
     <div className="calculator-container">
-      <h1 className="calculator-header">Waymo Robotaxi Investment Calculator</h1>
+      <div className="calculator-header">
+        <h1>Waymo Robotaxi Investment Calculator</h1>
+      </div>
       
-      {/* Dashboard Guide Banner */}
+      {/* How to Use Banner */}
       <div className="info-banner">
-        <h2 className="info-banner-title">
-          <svg className="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          How to Use This Calculator
-        </h2>
-        <div className="guide-item-text">
+        <div className="mb-2">
+          <h2 className="text-lg font-medium">How to Use This Calculator</h2>
+        </div>
+        
+        <div className="text-sm text-gray-700">
           <p className="mb-2">
-            <strong>Investment Timing:</strong> This calculator models a one-time investment made today. Hardware cost decline projections 
-            show market intelligence for future investments, not direct benefits to your initial vehicle.
+            <strong>Investment Timing:</strong> This calculator models a one-time investment made today. Hardware cost decline projections show market intelligence for future investments, not direct benefits to your initial vehicle.
           </p>
           <p className="mb-2">
-            <strong>Key Metrics:</strong> Focus on Year 1 ROI and Payback Period as primary decision factors. 
-            Adjust parameters like depreciation rate (typically 33% for high-mileage commercial vehicles) and fare per mile to see 
-            sensitivity to different variables.
+            <strong>Key Metrics:</strong> Focus on Year 1 ROI and Payback Period as primary decision factors. Adjust parameters like depreciation rate (typically 33% for high-mileage commercial vehicles) and fare per mile to see sensitivity to different variables.
           </p>
           <p>
-            <strong>Market Evolution:</strong> The Tesla competition section helps you understand how long premium pricing might last 
-            before competition intensifies. Adjust parameters to evaluate whether early market entry justifies premium technology prices.
+            <strong>Market Evolution:</strong> The Tesla competition section helps you understand how long premium pricing might last before competition intensifies. Adjust parameters to evaluate whether early market entry justifies premium technology prices.
           </p>
         </div>
       </div>
       
-      <div className="parameters-grid">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Investment Parameters */}
-        <div className="parameter-section">
-          <h2 className="parameter-section-title">Investment Parameters</h2>
+        <div className="panel">
+          <h2 className="panel-header">Investment Parameters</h2>
           
-          <div className="parameter-grid">
-            <div>
-              <label className="parameter-label">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="input-group">
+              <label className="input-label">
                 Base Vehicle Cost
               </label>
               <input
                 type="number"
                 value={baseVehicleCost}
                 onChange={(e) => setBaseVehicleCost(Number(e.target.value))}
-                className="parameter-input"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Autonomous Hardware Cost
               </label>
               <input
                 type="number"
                 value={autonomousHardwareCost}
                 onChange={(e) => setAutonomousHardwareCost(Number(e.target.value))}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                className="calculator-input"
               />
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Cost of Capital (%)
-              </label>
-              <input
-                type="number"
-                min="0"
-                max="30"
-                value={costOfCapital}
-                onChange={(e) => setCostOfCapital(Number(e.target.value))}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-              />
-            </div>
-            
-            <div className="col-span-1">
-              <p className="text-sm font-medium mb-1">Total Initial Investment: <span className="text-indigo-700 font-bold">{formatCurrency(baseVehicleCost + autonomousHardwareCost)}</span></p>
-            </div>
+          </div>
+          
+          <div className="mt-4 bg-gray-50 p-3 rounded">
+            <p className="text-sm font-medium">Total Initial Investment: <span className="font-bold">{formatCurrency(baseVehicleCost + autonomousHardwareCost)}</span></p>
           </div>
         </div>
         
         {/* Revenue Parameters */}
-        <div className="parameter-section">
-          <h2 className="parameter-section-title">Revenue Parameters</h2>
+        <div className="panel">
+          <h2 className="panel-header">Revenue Parameters</h2>
           
-          <div className="parameter-grid">
-            <div>
-              <label className="parameter-label">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="input-group">
+              <label className="input-label">
                 Hours Per Day
               </label>
               <input
@@ -238,12 +218,12 @@ const WaymoInvestmentCalculator = () => {
                 max="24"
                 value={hoursPerDay}
                 onChange={(e) => setHoursPerDay(Number(e.target.value))}
-                className="parameter-input"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Days Per Week
               </label>
               <input
@@ -252,12 +232,12 @@ const WaymoInvestmentCalculator = () => {
                 max="7"
                 value={daysPerWeek}
                 onChange={(e) => setDaysPerWeek(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Trip Length (Miles)
               </label>
               <input
@@ -266,12 +246,12 @@ const WaymoInvestmentCalculator = () => {
                 step="0.1"
                 value={tripLengthMiles}
                 onChange={(e) => setTripLengthMiles(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Trip Length (Minutes)
               </label>
               <input
@@ -279,12 +259,12 @@ const WaymoInvestmentCalculator = () => {
                 min="1"
                 value={tripLengthMinutes}
                 onChange={(e) => setTripLengthMinutes(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Initial Fare Per Mile ($)
               </label>
               <input
@@ -293,12 +273,12 @@ const WaymoInvestmentCalculator = () => {
                 step="0.01"
                 value={initialFarePerMile}
                 onChange={(e) => setInitialFarePerMile(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Fare Decline Rate (% per year)
               </label>
               <input
@@ -307,24 +287,26 @@ const WaymoInvestmentCalculator = () => {
                 max="50"
                 value={fareDeclineRate}
                 onChange={(e) => setFareDeclineRate(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
-            
-            <div className="col-span-2 mt-3 bg-gray-50 p-3 rounded-md">
-              <p className="text-sm font-medium mb-1">Annual Trips: <span className="text-indigo-700 font-bold">{formatNumber(annualTrips)}</span></p>
-              <p className="text-sm font-medium">Annual Miles: <span className="text-indigo-700 font-bold">{formatNumber(annualMiles)}</span></p>
-            </div>
+          </div>
+          
+          <div className="mt-4 bg-gray-50 p-3 rounded">
+            <p className="text-sm font-medium mb-1">Annual Trips: <span className="font-bold">{formatNumber(annualTrips)}</span></p>
+            <p className="text-sm font-medium">Annual Miles: <span className="font-bold">{formatNumber(annualMiles)}</span></p>
           </div>
         </div>
-        
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Expense Parameters */}
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">Expense Parameters</h2>
+        <div className="panel">
+          <h2 className="panel-header">Expense Parameters</h2>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="input-group">
+              <label className="input-label">
                 Depreciation Rate (% per year)
               </label>
               <input
@@ -333,12 +315,12 @@ const WaymoInvestmentCalculator = () => {
                 max="100"
                 value={depreciationRate}
                 onChange={(e) => setDepreciationRate(Number(e.target.value))}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Maintenance Costs ($/year)
               </label>
               <input
@@ -346,12 +328,12 @@ const WaymoInvestmentCalculator = () => {
                 min="0"
                 value={maintenanceCosts}
                 onChange={(e) => setMaintenanceCosts(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Insurance Costs ($/year)
               </label>
               <input
@@ -359,12 +341,12 @@ const WaymoInvestmentCalculator = () => {
                 min="0"
                 value={insuranceCosts}
                 onChange={(e) => setInsuranceCosts(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Cleaning Costs ($/year)
               </label>
               <input
@@ -372,12 +354,12 @@ const WaymoInvestmentCalculator = () => {
                 min="0"
                 value={cleaningCosts}
                 onChange={(e) => setCleaningCosts(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Charging Costs ($/year)
               </label>
               <input
@@ -385,12 +367,12 @@ const WaymoInvestmentCalculator = () => {
                 min="0"
                 value={chargingCosts}
                 onChange={(e) => setChargingCosts(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Software Licensing ($/year)
               </label>
               <input
@@ -398,19 +380,19 @@ const WaymoInvestmentCalculator = () => {
                 min="0"
                 value={softwareLicensing}
                 onChange={(e) => setSoftwareLicensing(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
           </div>
         </div>
         
-        {/* Market & Competition Parameters */}
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">Market & Competition</h2>
+        {/* Market & Competition */}
+        <div className="panel">
+          <h2 className="panel-header">Market & Competition</h2>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="input-group">
+              <label className="input-label">
                 Base Vehicle Cost Decline (% per year)
               </label>
               <input
@@ -419,12 +401,12 @@ const WaymoInvestmentCalculator = () => {
                 max="50"
                 value={baseVehicleCostDecline}
                 onChange={(e) => setBaseVehicleCostDecline(Number(e.target.value))}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Autonomous Hardware Decline (% per year)
               </label>
               <input
@@ -433,12 +415,12 @@ const WaymoInvestmentCalculator = () => {
                 max="50"
                 value={autonomousHardwareDecline}
                 onChange={(e) => setAutonomousHardwareDecline(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Tesla Cost Advantage (%)
               </label>
               <input
@@ -447,12 +429,12 @@ const WaymoInvestmentCalculator = () => {
                 max="90"
                 value={teslaCostAdvantage}
                 onChange={(e) => setTeslaCostAdvantage(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Tesla Pricing Impact (% per year)
               </label>
               <input
@@ -461,12 +443,12 @@ const WaymoInvestmentCalculator = () => {
                 max="90"
                 value={teslaPricingImpact}
                 onChange={(e) => setTeslaPricingImpact(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="input-group">
+              <label className="input-label">
                 Years to Project
               </label>
               <input
@@ -475,46 +457,87 @@ const WaymoInvestmentCalculator = () => {
                 max="10"
                 value={yearsToProject}
                 onChange={(e) => setYearsToProject(Number(e.target.value))}
-                className="w-full p-2 border rounded"
+                className="calculator-input"
               />
             </div>
           </div>
         </div>
       </div>
       
-      {/* Results */}
-      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-indigo-700 border-b pb-2">Investment Projection</h2>
+      {/* Key Investment Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="summary-card">
+          <h3 className="summary-title">Initial Investment</h3>
+          <p className="summary-value">{formatCurrency(baseVehicleCost + autonomousHardwareCost)}</p>
+          <p className="summary-note">Total initial cost</p>
+        </div>
+        
+        <div className="summary-card">
+          <h3 className="summary-title">Year 1 Return</h3>
+          <p className={`summary-value ${projectionData[0]?.roi >= 0 ? 'positive-value' : 'negative-value'}`}>
+            {projectionData[0]?.roi.toFixed(1)}%
+          </p>
+          <p className="summary-note">First year ROI</p>
+        </div>
+        
+        <div className="summary-card">
+          <h3 className="summary-title">Payback Period</h3>
+          {(() => {
+            let investment = baseVehicleCost + autonomousHardwareCost;
+            let cumulativeProfit = 0;
+            let paybackYear = 0;
+            
+            for (let i = 0; i < projectionData.length; i++) {
+              cumulativeProfit += projectionData[i].annualProfit;
+              if (cumulativeProfit >= investment && paybackYear === 0) {
+                paybackYear = i + 1;
+                break;
+              }
+            }
+            
+            return (
+              <>
+                <p className="summary-value">
+                  {paybackYear ? `${paybackYear} years` : 'Beyond projection'}
+                </p>
+                <p className="summary-note">Time to recover investment</p>
+              </>
+            );
+          })()}
+        </div>
+      </div>
+      
+      {/* Results Table */}
+      <div className="panel mb-8">
+        <h2 className="panel-header">Investment Projection</h2>
         
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <table className="results-table">
             <thead>
-              <tr className="bg-gradient-to-r from-indigo-600 to-indigo-700">
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Year</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Hardware Cost</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Vehicle Value</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Fare/Mile</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Revenue</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Capital Cost</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Total Expenses</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Profit</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">ROI</th>
+              <tr>
+                <th>Year</th>
+                <th>Hardware Cost</th>
+                <th>Vehicle Value</th>
+                <th>Fare/Mile</th>
+                <th>Revenue</th>
+                <th>Expenses</th>
+                <th>Profit</th>
+                <th>ROI</th>
               </tr>
             </thead>
             <tbody>
               {projectionData.map((data, index) => (
-                <tr key={data.year} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="py-3 px-4 border-b border-gray-200 font-medium">{data.year}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.hardwareCost)}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.vehicleValue)}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">${data.farePerMile.toFixed(2)}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.annualRevenue)}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.capitalCost)}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">{formatCurrency(data.annualExpenses)}</td>
-                  <td className={`py-3 px-4 border-b border-gray-200 ${data.annualProfit >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                <tr key={data.year}>
+                  <td>{data.year}</td>
+                  <td>{formatCurrency(data.hardwareCost)}</td>
+                  <td>{formatCurrency(data.vehicleValue)}</td>
+                  <td>${data.farePerMile.toFixed(2)}</td>
+                  <td>{formatCurrency(data.annualRevenue)}</td>
+                  <td>{formatCurrency(data.annualExpenses)}</td>
+                  <td className={data.annualProfit >= 0 ? 'positive-value' : 'negative-value'}>
                     {formatCurrency(data.annualProfit)}
                   </td>
-                  <td className={`py-3 px-4 border-b border-gray-200 ${data.roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                  <td className={data.roi >= 0 ? 'positive-value' : 'negative-value'}>
                     {data.roi.toFixed(1)}%
                   </td>
                 </tr>
@@ -525,196 +548,74 @@ const WaymoInvestmentCalculator = () => {
       </div>
       
       {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">Profit Projection</h2>
-          <div className="h-64">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="chart-container">
+          <h2 className="chart-title">Profit Projection</h2>
+          <div style={{ height: '300px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={projectionData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" label={{ value: 'Year', position: 'insideBottom', offset: -5 }} />
+                <XAxis dataKey="year" />
                 <YAxis tickFormatter={(value) => `$${value / 1000}k`} />
                 <Tooltip formatter={(value) => formatCurrency(value)} />
                 <Legend />
-                <Line type="monotone" dataKey="annualRevenue" name="Revenue" stroke="#4f46e5" strokeWidth={2} />
-                <Line type="monotone" dataKey="annualExpenses" name="Expenses" stroke="#ef4444" strokeWidth={2} />
-                <Line type="monotone" dataKey="annualProfit" name="Profit" stroke="#10b981" strokeWidth={2} />
+                <Line type="monotone" dataKey="annualRevenue" name="Revenue" stroke="#4f46e5" strokeWidth={2} activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="annualExpenses" name="Expenses" stroke="#ef4444" strokeWidth={2} activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="annualProfit" name="Profit" stroke="#10b981" strokeWidth={2} activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
         
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4 text-indigo-700 border-b pb-2">ROI Comparison</h2>
-          <div className="h-64">
+        <div className="chart-container">
+          <h2 className="chart-title">ROI Comparison</h2>
+          <div style={{ height: '300px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={projectionData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" label={{ value: 'Year', position: 'insideBottom', offset: -5 }} />
+                <XAxis dataKey="year" />
                 <YAxis tickFormatter={(value) => `${value}%`} />
-                <Tooltip formatter={(value) => `${value}%`} />
+                <Tooltip formatter={(value, name) => [name === "farePerMile" ? `$${value}` : `${value}%`, name === "farePerMile" ? "Fare per Mile" : "ROI"]} />
                 <Legend />
-                <Line type="monotone" dataKey="roi" name="Standard ROI" stroke="#0ea5e9" strokeWidth={2} />
-                <Line type="monotone" dataKey="farePerMile" name="Fare per Mile" stroke="#f59e0b" strokeWidth={2} />
+                <Line type="monotone" dataKey="roi" name="Standard ROI" stroke="#0ea5e9" strokeWidth={2} activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="farePerMile" name="Fare per Mile" stroke="#f59e0b" strokeWidth={2} activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-indigo-700 border-b pb-2">Competition with Tesla</h2>
+      {/* Tesla Competition */}
+      <div className="panel mb-8">
+        <h2 className="panel-header">Competition with Tesla</h2>
         
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <table className="results-table">
             <thead>
-              <tr className="bg-gradient-to-r from-indigo-600 to-indigo-700">
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Year</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Waymo Fare</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Waymo ROI</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Tesla Fare</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-white uppercase">Tesla ROI</th>
+              <tr>
+                <th>Year</th>
+                <th>Waymo Fare</th>
+                <th>Waymo ROI</th>
+                <th>Tesla Fare</th>
+                <th>Tesla ROI</th>
               </tr>
             </thead>
             <tbody>
               {projectionData.map((data, index) => (
-                <tr key={data.year} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="py-3 px-4 border-b border-gray-200 font-medium">{data.year}</td>
-                  <td className="py-3 px-4 border-b border-gray-200">${data.farePerMile.toFixed(2)}</td>
-                  <td className={`py-3 px-4 border-b border-gray-200 ${data.roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                <tr key={data.year}>
+                  <td>{data.year}</td>
+                  <td>${data.farePerMile.toFixed(2)}</td>
+                  <td className={data.roi >= 0 ? 'positive-value' : 'negative-value'}>
                     {data.roi.toFixed(1)}%
                   </td>
-                  <td className="py-3 px-4 border-b border-gray-200">${teslaCompetitionData[index].farePerMile.toFixed(2)}</td>
-                  <td className={`py-3 px-4 border-b border-gray-200 ${teslaCompetitionData[index].roi >= 0 ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                  <td>${teslaCompetitionData[index].farePerMile.toFixed(2)}</td>
+                  <td className={teslaCompetitionData[index].roi >= 0 ? 'positive-value' : 'negative-value'}>
                     {teslaCompetitionData[index].roi.toFixed(1)}%
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
-      
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg shadow-sm border border-blue-200 mb-10">
-        <h2 className="text-xl font-semibold mb-5 text-indigo-700 border-b border-indigo-100 pb-2">Key Investment Takeaways</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 transform transition-all hover:shadow-md hover:-translate-y-1">
-            <h3 className="text-md font-semibold mb-2 text-indigo-700">Initial Investment</h3>
-            <p className="text-2xl font-bold text-indigo-600">{formatCurrency(baseVehicleCost + autonomousHardwareCost)}</p>
-            <p className="text-sm text-gray-600">Total initial cost</p>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 transform transition-all hover:shadow-md hover:-translate-y-1">
-            <h3 className="text-md font-semibold mb-2 text-indigo-700">Year 1 Return</h3>
-            <p className={`text-2xl font-bold ${projectionData[0]?.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {projectionData[0]?.roi.toFixed(1)}%
-            </p>
-            <p className="text-sm text-gray-600">First year ROI</p>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 transform transition-all hover:shadow-md hover:-translate-y-1">
-            <h3 className="text-md font-semibold mb-2">Payback Period</h3>
-            {(() => {
-              let investment = baseVehicleCost + autonomousHardwareCost;
-              let cumulativeProfit = 0;
-              let paybackYear = 0;
-              
-              for (let i = 0; i < projectionData.length; i++) {
-                cumulativeProfit += projectionData[i].annualProfit;
-                if (cumulativeProfit >= investment && paybackYear === 0) {
-                  paybackYear = i + 1;
-                  break;
-                }
-              }
-              
-              return (
-                <>
-                  <p className="text-2xl font-bold text-indigo-600">
-                    {paybackYear ? `${paybackYear} years` : 'Beyond projection'}
-                  </p>
-                  <p className="text-sm text-gray-600">Time to recover investment</p>
-                </>
-              );
-            })()}
-          </div>
-        </div>
-        
-        <div className="mt-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-          <h3 className="text-md font-semibold mb-3 text-indigo-700">Analysis</h3>
-          <p className="text-sm text-gray-700 mb-2">
-            This model projects the potential returns of investing in a Waymo robotaxi, factoring in hardware costs, 
-            utilization rates, pricing changes, and competitive pressures.
-          </p>
-          <p className="text-sm text-gray-700">
-            Key considerations include the accelerated rate of technology depreciation, potential market saturation,
-            and pricing pressure from competitors like Tesla. The investment appears most profitable in early years
-            before market maturity and price competition intensify.
-          </p>
-        </div>
-      </div>
-      
-      {/* How to Use This Dashboard Guide */}
-      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-6 rounded-lg shadow-sm border border-yellow-200">
-        <h2 className="text-xl font-semibold mb-5 text-amber-700 border-b border-amber-100 pb-2">How to Use This Dashboard</h2>
-        
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
-            <h3 className="text-md font-medium text-amber-700 mb-2">Understanding the Investment Timeline</h3>
-            <p className="text-sm text-gray-700">
-              This dashboard models a one-time investment made today. The hardware cost decline projections don't affect 
-              your initial vehicle's profitability, but they provide crucial market intelligence about when future 
-              investments might be optimal.
-            </p>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
-            <h3 className="text-md font-medium text-amber-700 mb-2">Reading Market & Competition Parameters</h3>
-            <p className="text-sm text-gray-700">
-              The hardware cost decline rates show how the market will evolve. Use these metrics to:
-            </p>
-            <ul className="text-sm text-gray-700 list-disc ml-5 mt-1">
-              <li>Anticipate pricing pressure from new market entrants with lower capital costs</li>
-              <li>Plan optimal timing for future fleet expansion</li>
-              <li>Determine when to replace your initial vehicle as technology improves</li>
-              <li>Evaluate whether delaying your investment would provide better returns</li>
-            </ul>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
-            <h3 className="text-md font-medium text-amber-700 mb-2">Investment Strategy Insights</h3>
-            <p className="text-sm text-gray-700">
-              The Tesla competition section models how lower-cost competitors will affect market dynamics. This helps you:
-            </p>
-            <ul className="text-sm text-gray-700 list-disc ml-5 mt-1">
-              <li>Understand how long premium pricing might last before competition intensifies</li>
-              <li>Evaluate the risk of technological obsolescence beyond normal depreciation</li>
-              <li>Consider how different market segments might evolve at different rates</li>
-              <li>Assess whether early market entry justifies paying premium prices for current technology</li>
-            </ul>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
-            <h3 className="text-md font-medium text-amber-700 mb-2">Using This Tool for Decision-Making</h3>
-            <p className="text-sm text-gray-700">
-              Experiment with different parameters to stress-test your investment case:
-            </p>
-            <ul className="text-sm text-gray-700 list-disc ml-5 mt-1">
-              <li>Start with conservative estimates to ensure viability in challenging scenarios</li>
-              <li>Identify which parameters have the most significant impact on profitability</li>
-              <li>Compare immediate investment vs. waiting 1-2 years for improved technology at lower costs</li>
-              <li>Consider how regulatory changes might affect different parameters over time</li>
-            </ul>
-          </div>
-          
-          <div className="mt-6 bg-gradient-to-r from-blue-100 to-indigo-100 p-4 rounded-lg shadow-sm">
-            <h3 className="text-md font-medium text-indigo-700 mb-2">Future Development</h3>
-            <p className="text-sm text-gray-700">
-              This calculator is an open-source project available on GitHub. Contributions are welcome to improve 
-              the model assumptions, add features, or share interesting investment scenarios. 
-              Contact the repository maintainer to learn how you can contribute.
-            </p>
-          </div>
         </div>
       </div>
     </div>
